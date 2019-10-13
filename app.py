@@ -24,7 +24,9 @@ app.config['MQTT_USERNAME'] = username
 app.config['MQTT_PASSWORD'] = password
 app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 app.config['MQTT_KEEPALIVE'] = 5
-app.config['MQTT_TLS_ENABLED'] = False
+app.config['MQTT_TLS_ENABLED'] = True
+app.config['MQTT_TLS_INSECURE'] = True
+app.config['MQTT_TLS_CA_CERTS'] = None
 
 mqtt = Mqtt(app)
 socketio = SocketIO(app)

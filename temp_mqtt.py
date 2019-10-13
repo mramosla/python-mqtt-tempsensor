@@ -2,6 +2,7 @@ import time
 from time import sleep
 from datetime import datetime
 import json
+import ssl
 
 import paho.mqtt.client as mqtt
 import mqtt_init
@@ -47,6 +48,8 @@ client.on_message=on_message
 
 print("Connecting to broker ", broker)
 client.username_pw_set(username, password)
+client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
+    tls_version=ssl.PROTOCOL_TLS, ciphers=None)
 client.connect(broker, port) # connect to broker
 client.subscribe("Devices")
 client.subscribe("Devices/dht11")

@@ -9,6 +9,7 @@ import paho.mqtt.client as mqtt
 import mqtt_init
 
 import twilio_text
+import ssl
 
 # URL To send shutdown command
 URL = "http://165.227.241.194:8301/1p4e9je1"
@@ -69,6 +70,8 @@ client.on_message=on_message
 
 print("Connecting to broker ", broker)
 client.username_pw_set(username, password)
+client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
+    tls_version=ssl.PROTOCOL_TLS, ciphers=None)
 client.connect(broker, port) # connect to broker
 client.subscribe("Devices/dht11/temp_stats")
 client.publish("Devices", '{"temp_counter": "online"}')

@@ -15,7 +15,7 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 import subprocess
-#import sys
+import ssl
 
 # MQTT init settings
 broker = mqtt_init.broker
@@ -117,6 +117,9 @@ client.on_message=on_message
 
 print("Connecting to broker ", broker)
 client.username_pw_set(username, password)
+# Comment out if not using SSL/TLS
+client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
+    tls_version=ssl.PROTOCOL_TLS, ciphers=None)
 client.connect(broker, port) # connect to broker
 client.subscribe("Devices")
 client.subscribe("Devices/oled")
