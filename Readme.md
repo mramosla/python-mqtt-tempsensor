@@ -24,6 +24,13 @@ username = ""
 password = ""
 port = <port number>
 
+# Set URL to rest server
+url = ""
+
+# Custom time out options set as needed
+timeout = 600
+timeout_default = 600
+
 # twilio_init.py
 
 account_sid = ''
