@@ -155,7 +155,8 @@ try:
       # Add MQTT vars
       temp = "Temp: {} F".format(tempf)
       hum = "Humidity: {} %".format(round(humidity))
-      stat = "Status: {}".format(status)
+      status_up = status.upper()
+      stat = "Status: {}".format(status_up)
 
       draw.text((x, top),       "IP: " + str(IP2),  font=font, fill=255)
       draw.text((x, top+8),     str(temp), font=font, fill=255)

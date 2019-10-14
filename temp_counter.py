@@ -5,6 +5,7 @@ from datetime import datetime
 import json
 import requests
 
+
 import paho.mqtt.client as mqtt
 import mqtt_init
 
@@ -12,7 +13,7 @@ import twilio_text
 import ssl
 
 # URL To send shutdown command
-URL = "http://165.227.241.194:8301/1p4e9je1"
+URL = "http://165.227.241.194:8300/1dwvf801"
 
 # MQTT init settings
 broker = mqtt_init.broker
@@ -27,6 +28,7 @@ status_code = 0
 counter = 0
 # Set wait period/keepalive
 timeout = 20
+timeout_default = 20
 
 temp_stats = {
   "tempc": 0,
@@ -37,10 +39,10 @@ temp_stats = {
 }
 
 texts = {
-  "warning": "Warning office temp in warning zone",
-  "danger": "Warning office temp in danger zone",
+  "Warning": "Alert: office temp in Warning zone",
+  "Danger": "Alert: office temp in Danger zone. Shutdown initiated",
   "shutdown": "Office temp in danger zone. Server shutdown sent.",
-  "error": "Server not responding. Shutdown failed."
+  "error": "Alert: Server not responding. Shutdown failed."
 }
 
 ##### Begin MQTT Settings #####
@@ -82,6 +84,8 @@ client.loop_start()
 try:
   while True:
 
+    sleep(.1)
+
     temp = temp_stats["tempf"]
     status = temp_stats["temp_status"]
     timestamp = temp_stats["timestamp"]
@@ -91,6 +95,67 @@ try:
       if status == "Normal":
         status_code = 0
         print("Reset status code = {}".format(status_code))
+
+      if status == "Danger":
+        print("Temp in {} zone {}".format(status, temp))
+        print("Waiting {} sec...".format(timeout))
+        print("Timestamp: " + timestamp)
+        sleep(timeout)
+
+        print("Checking temp again...\n")
+        print("Current temp: {}".format(temp))
+        curr_time = str(datetime.now())
+        print("Current Time {}".format(curr_time))
+
+        # Update values to current
+        temp = temp_stats["tempf"]
+        status = temp_stats["temp_status"]
+        timestamp = temp_stats["timestamp"]
+
+        if status == "Danger":
+          print("Critical temp reached sending shutdown...")
+          
+          try:
+            print(URL)
+            r = requests.get(url = URL, timeout=5)
+            if r.status_code == 200:
+              print("success")
+              text_msg = texts[status]
+              print(text_msg)
+              twilio_text.sms_send(text_msg)
+              status_code = 2
+              print("Status Code e = {}".format(status_code))
+          except:
+            pass
+            print("Error: Server not responding")
+            counter += 1
+            timeout = 2
+            print("Counter: {}".format(counter))
+            if counter == 5:
+              print("Server shutown failed 5 times")
+              text_msg = texts["error"]
+              print(text_msg)
+              twilio_text.sms_send(text_msg)
+              status_code = 2
+              print("Status Code e1 = {}".format(status_code))
+
+        if status == "Normal":
+          print("Temp returned to normal levels")
+          status_code = 0
+          timeout = timeout_default
+          print("Status Code d = {}".format(status_code))
+    
+    if status_code == 2:
+      if status == "Warning":
+       print("temp in warning zone")
+       status_code = 1
+       print("Status Code f = {}".format(status_code))
+      if status == "Normal":
+        print("Temp back to normal")
+        status_code = 0
+        counter = 0
+        timeout = timeout_default
+        print("Status Code g = {}".format(status_code))
 
     if status != "Normal":
 
@@ -115,39 +180,55 @@ try:
           print("Temp still in warning zone...\n")
           # Send waring text
           print("Sending warning text...")
-          twilio_text.sms_send(status)
+          text_msg = texts[status]
+          print(text_msg)
+          twilio_text.sms_send(text_msg)
           # Set status code = 1
           status_code = 1
           print("Status Code b = {}".format(status_code))
 
         if status == "Danger":
           print("Critical temp reached sending shutdown...")
-          PARAMS = {"message": "shutdown"}
+          text_msg = texts[status]
+          print(text_msg)
+
           try:
-            r = requests.get(url = URL, timeout=10)
+            print(URL)
+            r = requests.get(url = URL, timeout=5)
             if r.status_code == 200:
               print("success")
-              status_code = 1
-              print("Status Code c = {}".format(status_code))
+              text_msg = texts[status]
+              print(text_msg)
+              twilio_text.sms_send(text_msg)
+              status_code = 2
+              print("Status Code e = {}".format(status_code))
           except:
             pass
             print("Error: Server not responding")
             counter += 1
+            timeout = 2
+            print("Counter: {}".format(counter))
             if counter == 5:
               print("Server shutown failed 5 times")
-              print("sending text")
-              status_code = 1
-              print("Status Code c1 = {}".format(status_code))
+              text_msg = texts["error"]
+              print(text_msg)
+              twilio_text.sms_send(text_msg)
+              status_code = 2
+              print("Status Code e1 = {}".format(status_code))
 
         if status == "Normal":
           print("Temp returned to normal levels")
           status_code = 0
+          counter = 0
+          timeout = timeout_default
           print("Status Code d = {}".format(status_code))
 
       lastTemp = temp
 
 except KeyboardInterrupt:
   pass
+
+
 
 client.loop_stop()
 client.disconnect()

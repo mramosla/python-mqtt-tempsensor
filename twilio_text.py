@@ -9,11 +9,11 @@ auth_token = twilio_init.auth_token
 client = Client(account_sid, auth_token)
 
 
-def sms_send(status):
-  alert_msg = "Alert! Office temp in {} zone.".format(status)
+def sms_send(message):
+  #alert_msg = "Alert! Office temp in {} zone.".format(status)
   message = client.messages \
                 .create(
-                     body=alert_msg,
+                     body=message,
                      from_= twilio_init.twilioNum,
                      to=twilio_init.sendtoNum
                  )
