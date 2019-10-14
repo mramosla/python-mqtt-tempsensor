@@ -13,7 +13,7 @@ import twilio_text
 import ssl
 
 # URL To send shutdown command
-URL = "http://165.227.241.194:8300/1dwvf801"
+URL = "http://192.168.2.180:8080/srv/0/1"
 
 # MQTT init settings
 broker = mqtt_init.broker
@@ -27,8 +27,8 @@ lastTemp = 0
 status_code = 0
 counter = 0
 # Set wait period/keepalive
-timeout = 20
-timeout_default = 20
+timeout = 600
+timeout_default = 600
 
 temp_stats = {
   "tempc": 0,
