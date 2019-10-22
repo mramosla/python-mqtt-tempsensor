@@ -17,6 +17,8 @@ from PIL import ImageFont
 import subprocess
 import ssl
 
+import socket
+
 # MQTT init settings
 broker = mqtt_init.broker
 port = mqtt_init.port
@@ -82,9 +84,34 @@ tempc = 0
 humidity = 0
 status = "Normal"
 
+
 # Define callbacks
-# def on_log(client, userdata, level, buf):
-#   print("log: "+buf)
+def on_log(client, userdata, level, buf):
+  
+  #print("log: "+buf)
+  if buf != "Sending PINGREQ":
+    if buf != "Received PINGRESP":
+      if level == 1:
+        print('INFO: {}'.format(buf))
+      if level == 2:
+        print('NOTICE: {}'.format(buf))
+      if level == 4:
+        print('WARNING: {}'.format(buf))
+      if level == 8:
+        print('ERROR: {}'.format(buf))
+      if level == 16:
+        print('DEBUG: {}'.format(buf))
+  
+
+def on_connect(client, userdata, flags, rc):
+  if rc==0:
+    print("connected OK Returned code = ", rc)
+  else:
+    print("Bad connection Returned code = ", rc)
+
+def on_disconnect(client, userdata, rc):
+  if rc !=0: 
+   print("Disconnect: ", rc)
 
 def on_message(client, userdata, msg):
   global tempf
@@ -104,15 +131,18 @@ def on_message(client, userdata, msg):
     tempc = m_in['tempc']
     humidity = m_in["humidity"]
     status = m_in["temp_status"]
+    #print(m_in)
     # print(tempf)
     # print(tempc)
     # print(humidity)
     # print(status)
 
 # MQTT local init
-client = mqtt.Client("oled")
+client = mqtt.Client(mqtt_init.oled_id, clean_session=False)
 
-#client.on_log = on_log
+client.on_log = on_log
+client.on_connect=on_connect
+client.on_disconnect=on_disconnect
 client.on_message=on_message
 
 print("Connecting to broker ", broker)
@@ -121,10 +151,10 @@ client.username_pw_set(username, password)
 client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
     tls_version=ssl.PROTOCOL_TLS, ciphers=None)
 client.connect(broker, port) # connect to broker
-client.subscribe("Devices")
-client.subscribe("Devices/oled")
-client.subscribe("Devices/oled/#")
-client.subscribe("Devices/dht11/temp_stats")
+client.subscribe("Devices", qos=1)
+client.subscribe("Devices/oled", qos=1)
+client.subscribe("Devices/oled/#", qos=1)
+client.subscribe("Devices/dht11/temp_stats", qos=1)
 client.publish("Devices", '{"oled": "online"}')
 time.sleep(4)
 
@@ -134,6 +164,8 @@ client.loop_start()
 
 try:
   while True:
+
+
 
     #try:
 
@@ -168,10 +200,19 @@ try:
       disp.display()
       time.sleep(.1)
 
+    # except KeyboardInterrupt:
+    #   pass
+    #   print("Error...")
+
 except KeyboardInterrupt:
   pass
   disp.clear()
   disp.display()
+  print("Keyboard Interupt")
+
+except socket.error:
+  pass
+  print("Error: %s" % e)
 
 client.loop_stop()
 client.disconnect()

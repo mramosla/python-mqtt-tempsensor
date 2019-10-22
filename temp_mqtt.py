@@ -16,6 +16,8 @@ username = mqtt_init.username
 password = mqtt_init.password
 
 last_temp = 0
+warn_temp = mqtt_init.warn_temp
+dang_temp = mqtt_init.dang_temp
 
 # Temp stats dictionary
 temp_stats={
@@ -72,9 +74,9 @@ try:
       temp_stats["humidity"] = humidity
       temp_stats["timestamp"] = timestamp
       temp_stats["temp_status"] = "Normal"
-      if tempf >= 90:
+      if tempf >= warn_temp:
        temp_stats["temp_status"] = "Warning"
-      if tempf >= 95:
+      if tempf >= dang_temp:
          temp_stats["temp_status"] = "Danger"
 
 
