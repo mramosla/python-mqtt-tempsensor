@@ -84,23 +84,35 @@ tempc = 0
 humidity = 0
 status = "Normal"
 
+#timestamp = datetime.now()
+#print(timestamp)
 
 # Define callbacks
 def on_log(client, userdata, level, buf):
   
   #print("log: "+buf)
+
+  timestamp = datetime.now()
+  
+  # Filter out unwanted keepalive logs
   if buf != "Sending PINGREQ":
     if buf != "Received PINGRESP":
+      # Print logs to console
       if level == 1:
         print('INFO: {}'.format(buf))
+        print('Timestamp: {}\n'.format(timestamp))
       if level == 2:
         print('NOTICE: {}'.format(buf))
+        print('Timestamp: {}\n'.format(timestamp))
       if level == 4:
         print('WARNING: {}'.format(buf))
+        print('Timestamp: {}\n'.format(timestamp))
       if level == 8:
         print('ERROR: {}'.format(buf))
+        print('Timestamp: {}\n'.format(timestamp))
       if level == 16:
         print('DEBUG: {}'.format(buf))
+        print('Timestamp: {}\n'.format(timestamp))
   
 
 def on_connect(client, userdata, flags, rc):
