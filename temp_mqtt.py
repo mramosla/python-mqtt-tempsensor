@@ -64,6 +64,8 @@ client.loop_start()
 try:
   while True:
 
+      sleep(.1)
+
       # Define vars capture stats
       humidity, temperature = Adafruit_DHT.read_retry(11, 4)
       tempf = temperature * 9/5 + 32
@@ -103,6 +105,10 @@ try:
 
 except KeyboardInterrupt:
   pass
+
+except socket.error:
+  pass
+  print("Error: %s" % e)
 
 client.loop_stop()
 client.disconnect()

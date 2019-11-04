@@ -93,8 +93,24 @@ try:
     if status_code == 1:
 
       if status == "Normal":
-        status_code = 0
-        print("Reset status code = {}".format(status_code))
+        print("Temp in {} zone {}".format(status, temp))
+        print("Waiting {} sec...".format(timeout))
+        print("Timestamp: " + timestamp)
+        sleep(15)
+
+        print("Checking temp again...\n")
+        print("Current temp: {}".format(temp))
+        curr_time = str(datetime.now())
+        print("Current Time {}".format(curr_time))
+
+        # Update values to current
+        temp = temp_stats["tempf"]
+        status = temp_stats["temp_status"]
+        timestamp = temp_stats["timestamp"]
+
+        if status == "Normal":
+          status_code = 0
+          print("Reset status code = {}".format(status_code))
 
       if status == "Danger":
         print("Temp in {} zone {}".format(status, temp))
