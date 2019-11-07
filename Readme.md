@@ -31,6 +31,19 @@ url = ""
 timeout = 600
 timeout_default = 600
 
+# More custom options
+warn_temp = 0
+
+dang_temp = 0
+
+oled_id = ""
+
+FLOWROUTE_USER = ""
+
+FLOWROUTE_KEY = ""
+
+OUTGOING_CID = ""
+
 # twilio_init.py
 
 account_sid = ''
