@@ -88,6 +88,8 @@ def on_message(client, userdata, msg):
         URL = "https://api.flowroute.com/v2.1/messages"
         #URL = "http://192.168.2.70:8000/wmqitzwm"
         headers = {'Content-Type': 'application/vnd.api+json'}
+
+        #Flow route send
         r = requests.post(url = URL, headers=headers , auth=basicAuthCredentials, timeout=5, data = data_json)
         if r.status_code == 200:
             print(r.text)
@@ -101,10 +103,14 @@ def on_message(client, userdata, msg):
         msg_from = m_in["from"]
         message = "Alert: Incoming text from: {}\nMessage: {}".format(msg_from, msg_text)
         print(message)
-        twilio_text.sms_send(message)
-  
 
-client = mqtt.Client("send_sms1")
+        # Twilio send
+        twilio_text.sms_send(message)
+
+clientID = mqtt_init.sms_send_Id
+init_message = { clientID: "online"}
+
+client = mqtt.Client(clientID)
 
 
 #client.on_log = on_log
@@ -113,6 +119,9 @@ client.on_disconnect=on_disconnect
 client.on_message=on_message
 
 print("Connecting to broker ", broker)
+
+
+
 client.username_pw_set(username, password)
 client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
     tls_version=ssl.PROTOCOL_TLS, ciphers=None)
@@ -120,7 +129,7 @@ client.connect(broker, port) # connect to broker
 client.subscribe("SMS_out/flow")
 client.subscribe("SMS_out/twilio")
 client.subscribe("SMS_in")
-client.publish("Devices", '{"flow_send": "online"}')
+client.publish("Devices", str(init_message))
 time.sleep(4)
 
 client.loop_start()
