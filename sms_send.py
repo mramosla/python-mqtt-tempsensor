@@ -126,10 +126,10 @@ client.username_pw_set(username, password)
 client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
     tls_version=ssl.PROTOCOL_TLS, ciphers=None)
 client.connect(broker, port) # connect to broker
-client.subscribe("SMS_out/flow")
-client.subscribe("SMS_out/twilio")
-client.subscribe("SMS_test")
-client.subscribe("SMS_in")
+client.subscribe("SMS_out/flow", qos=1)
+client.subscribe("SMS_out/twilio", qos=1)
+client.subscribe("SMS_test", qos=1)
+client.subscribe("SMS_in", qos=1)
 client.publish("Devices", str(init_message))
 time.sleep(4)
 
