@@ -133,6 +133,7 @@ client.publish("Devices", str(init_message))
 time.sleep(4)
 
 client.loop_start()
+sleep(0.1)
 
 try:
   while True:
