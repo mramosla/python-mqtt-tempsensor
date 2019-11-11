@@ -128,6 +128,7 @@ client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_RE
 client.connect(broker, port) # connect to broker
 client.subscribe("SMS_out/flow")
 client.subscribe("SMS_out/twilio")
+client.subscribe("SMS_test")
 client.subscribe("SMS_in")
 client.publish("Devices", str(init_message))
 time.sleep(4)
