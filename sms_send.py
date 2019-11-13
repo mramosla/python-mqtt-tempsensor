@@ -58,6 +58,10 @@ def on_log(client, userdata, level, buf):
 def on_connect(client, userdata, flags, rc):
   if rc==0:
     print("connected OK")
+    client.subscribe("SMS_out/flow", qos=1)
+    client.subscribe("SMS_out/twilio", qos=1)
+    client.subscribe("SMS_test", qos=1)
+    client.subscribe("SMS_in", qos=1)
   else:
     print("Bad Connection Returned code=", rc)
 
@@ -126,10 +130,10 @@ client.username_pw_set(username, password)
 client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
     tls_version=ssl.PROTOCOL_TLS, ciphers=None)
 client.connect(broker, port) # connect to broker
-client.subscribe("SMS_out/flow", qos=1)
-client.subscribe("SMS_out/twilio", qos=1)
-client.subscribe("SMS_test", qos=1)
-client.subscribe("SMS_in", qos=1)
+# client.subscribe("SMS_out/flow", qos=1)
+# client.subscribe("SMS_out/twilio", qos=1)
+# client.subscribe("SMS_test", qos=1)
+# client.subscribe("SMS_in", qos=1)
 client.publish("Devices", str(init_message))
 time.sleep(4)
 

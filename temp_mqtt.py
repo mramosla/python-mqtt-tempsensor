@@ -42,20 +42,35 @@ def on_message(client, userdata, msg):
   m_in = json.loads(m_decode)
   print(m_in)
 
+def on_connect(client, userdata, flags, rc):
+  if rc==0:
+    print("connected OK")
+    client.subscribe("Devices")
+    client.subscribe("Devices/dht11")
+    client.subscribe("Devices/dht11/#")
+  else:
+    print("Bad Connection Returned code=", rc)
+
+def on_disconnect(client, userdata, rc):
+  if rc !=0: 
+   print("Disconnect: ", rc)
+
 # MQTT local init
 client = mqtt.Client("dht11")
 
 #client.on_log = on_log
 client.on_message=on_message
+client.on_connect=on_connect
+client.on_disconnect=on_disconnect
 
 print("Connecting to broker ", broker)
 client.username_pw_set(username, password)
 client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
     tls_version=ssl.PROTOCOL_TLS, ciphers=None)
 client.connect(broker, port) # connect to broker
-client.subscribe("Devices")
-client.subscribe("Devices/dht11")
-client.subscribe("Devices/dht11/#")
+# client.subscribe("Devices")
+# client.subscribe("Devices/dht11")
+# client.subscribe("Devices/dht11/#")
 client.publish("Devices", '{"dht11": "online"}')
 time.sleep(4)
 

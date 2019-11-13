@@ -98,6 +98,7 @@ def shutdown_counter():
 def on_connect(client, userdata, flags, rc):
   if rc==0:
     print("connected OK")
+    client.subscribe("Servers/cmd")
   else:
     print("Bad Connection Returned code=", rc)
 
@@ -132,7 +133,7 @@ client.username_pw_set(username, password)
 client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
     tls_version=ssl.PROTOCOL_TLS, ciphers=None)
 client.connect(broker, port) # connect to broker
-client.subscribe("Servers/cmd")
+# client.subscribe("Servers/cmd")
 client.publish("Devices", '{"shutdown_app": "online"}')
 time.sleep(4)
 
