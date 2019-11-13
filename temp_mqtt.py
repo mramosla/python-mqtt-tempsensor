@@ -54,6 +54,8 @@ def on_connect(client, userdata, flags, rc):
 def on_disconnect(client, userdata, rc):
   if rc !=0: 
    print("Disconnect: ", rc)
+   timestamp = datetime.now()
+   print("Timestamp: ", timestamp)
 
 # MQTT local init
 client = mqtt.Client("dht11")

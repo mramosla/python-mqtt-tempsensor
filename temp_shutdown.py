@@ -117,7 +117,8 @@ def on_message(client, userdata, msg):
 def on_disconnect(client, userdata, rc):
   if rc !=0: 
    print("Disconnect: ", rc)
-          
+   timestamp = datetime.now()
+   print("Timestamp: ", timestamp)
   
 
 # create client
