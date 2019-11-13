@@ -88,31 +88,29 @@ status = "Normal"
 #print(timestamp)
 
 # Define callbacks
-# def on_log(client, userdata, level, buf):
+def on_log(client, userdata, level, buf):
   
-#   #print("log: "+buf)
-
-#   timestamp = datetime.now()
+  #print("log: "+buf)
   
-#   # Filter out unwanted keepalive logs
-#   if buf != "Sending PINGREQ":
-#     if buf != "Received PINGRESP":
-#       # Print logs to console
-#       if level == 1:
-#         print('INFO: {}'.format(buf))
-#         print('Timestamp: {}\n'.format(timestamp))
-#       if level == 2:
-#         print('NOTICE: {}'.format(buf))
-#         print('Timestamp: {}\n'.format(timestamp))
-#       if level == 4:
-#         print('WARNING: {}'.format(buf))
-#         print('Timestamp: {}\n'.format(timestamp))
-#       if level == 8:
-#         print('ERROR: {}'.format(buf))
-#         print('Timestamp: {}\n'.format(timestamp))
-#       if level == 16:
-#         print('DEBUG: {}'.format(buf))
-#         print('Timestamp: {}\n'.format(timestamp))
+  # Filter out unwanted keepalive logs
+  if buf != "Sending PINGREQ":
+    if buf != "Received PINGRESP":
+      # Print logs to console
+      if level == 1:
+        print('INFO: {}'.format(buf))
+        print('Timestamp: {}\n'.format(timestamp))
+      if level == 2:
+        print('NOTICE: {}'.format(buf))
+        print('Timestamp: {}\n'.format(timestamp))
+      if level == 4:
+        print('WARNING: {}'.format(buf))
+        print('Timestamp: {}\n'.format(timestamp))
+      if level == 8:
+        print('ERROR: {}'.format(buf))
+        print('Timestamp: {}\n'.format(timestamp))
+      if level == 16:
+        print('DEBUG: {}'.format(buf))
+        print('Timestamp: {}\n'.format(timestamp))
   
 
 def on_connect(client, userdata, flags, rc):
@@ -156,7 +154,7 @@ def on_message(client, userdata, msg):
 # MQTT local init
 client = mqtt.Client(mqtt_init.oled_id, clean_session=False)
 
-#client.on_log = on_log
+client.on_log = on_log
 client.on_connect=on_connect
 client.on_disconnect=on_disconnect
 client.on_message=on_message
