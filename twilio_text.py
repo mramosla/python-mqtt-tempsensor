@@ -14,7 +14,9 @@ def sms_send(message):
   message = client.messages \
                 .create(
                      body=message,
+                     # Caller ID from
                      from_= twilio_init.twilioNum,
+                     # Sends text to this number
                      to=twilio_init.sendtoNum
                  )
 
