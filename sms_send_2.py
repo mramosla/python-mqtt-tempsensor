@@ -91,7 +91,7 @@ def on_message(client, userdata, msg):
         print("Data: ", data)
 
         # send outgoing text using flowroute
-        flow_text.flow_sms_send(data)
+        #flow_text.flow_sms_send(data)
 
     # Send notification text on incoming messages
     if msg.topic == "SMS_in":
@@ -105,7 +105,7 @@ def on_message(client, userdata, msg):
         print("Outgoing notification message: ", message)
 
         # Twilio forward to designated recipient
-        twilio_text.sms_send(message)
+        #twilio_text.sms_send(message)
 
 clientID = mqtt_init.sms_send_Id
 init_message = { clientID: "online"}
