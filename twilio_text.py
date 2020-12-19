@@ -22,3 +22,17 @@ def sms_send(message):
 
   print(message.sid)
 
+def sms_send2(message):
+  #alert_msg = "Alert! Office temp in {} zone.".format(status)
+  message = client.messages \
+                .create(
+                     body=message,
+                     # Caller ID from
+                     from_= twilio_init.twilioNum,
+                     # Sends text to this number
+                     to=twilio_init.sendtoNum2
+                 )
+
+  print(message.sid)
+
+

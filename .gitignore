@@ -2,3 +2,4 @@
 __pycache__
 *_init.py
 *_test.py
+*.bak

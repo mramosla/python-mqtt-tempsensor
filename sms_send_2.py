@@ -106,6 +106,7 @@ def on_message(client, userdata, msg):
 
         # Twilio forward to designated recipient
         twilio_text.sms_send(message)
+        twilio_text.sms_send2(message)
 
 clientID = mqtt_init.sms_send_Id
 init_message = { clientID: "online"}
