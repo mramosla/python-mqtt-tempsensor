@@ -105,12 +105,12 @@ def on_message(client, userdata, msg):
         print("Outgoing notification message: ", message)
 
         # Twilio forward to designated recipient
-<<<<<<< HEAD
+
         twilio_text.sms_send(message)
         twilio_text.sms_send2(message)
-=======
+
         #twilio_text.sms_send(message)
->>>>>>> 079e81dcb22b0719de2a5175477c242abe7b4daa
+
 
 clientID = mqtt_init.sms_send_Id
 init_message = { clientID: "online"}
