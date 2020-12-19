@@ -4,6 +4,8 @@ import json
 import mysql.connector
 from mysql.connector import Error
 
+
+# This function querys Mysql for the First and Last name of the text recipent. 
 def getSenderName(phone, message, timestamp):
   try:
     mySQLConnection = mysql.connector.connect(
@@ -19,33 +21,116 @@ def getSenderName(phone, message, timestamp):
 
     cursor = mySQLConnection.cursor(buffered=True)
     sql_select_query = """SELECT firstname, lastname, mobile FROM vtiger_contactdetails where mobile= %s"""
+    sql_select_query1 = """SELECT firstname, lastname, phone FROM vtiger_contactdetails where phone= %s"""
+    sql_select_query2 = """SELECT contactsubscriptionid FROM vtiger_contactsubdetails where homephone= %s"""
+    sql_select_query3 = """SELECT firstname, lastname FROM vtiger_contactdetails where contactid=%s"""
+
     cursor.execute(sql_select_query, (phone,))
     record = cursor.fetchall()
 
     if not cursor.rowcount:
-      print("Row empty")
+      # print("Row empty")
       firstname = "Unknown"
       lastname = "Recipient"
 
-      # create dict
-      contact_info = {
-        "firstname": firstname,
-        "lastname": lastname,
-        "phone": phone,
-        "msg": message,
-        "timestamp": timestamp
-      }
+      # If mobile number is empty then query phone number
+      cursor.execute(sql_select_query1, (phone,))
+      record = cursor.fetchall()
+      print("Record mobile: ", record)
 
-      print("Contact Info If: ", contact_info)
+      # if phone number is empty query db table containing "homephone" and get contactsubscriptionid
+      if not cursor.rowcount:
+        cursor.execute(sql_select_query2, (phone,))
+        record = cursor.fetchall()
+        print("Record homephone contactsubscriptionid: ", record)
 
-      # Convert dict to json
-      json_data = json.dumps(contact_info)
-      print("JSON Data If: ", json_data)
+        # if homephone is empty Firstname = Unknown, Lastname = Recipient
+        if not cursor.rowcount:
+          firstname = "Unknown"
+          lastname = "Recipient"
+          new_record = (firstname, lastname, phone)
+          print("New Record: ", new_record)
+          print("New Record Type: ", type(new_record))
+          # insert into list record[]
+          record = []
+          record.append(new_record)
+          print("Record after tuple insert", record)
+          for row in record:
+            print("Print row: ", row)
+            print("\n")
+            print("Row type = ", type(row)) # type = Tuple
 
-      return json_data
+            
+            print("\n")
+            firstname = row[0]
+            lastname = row[1]
+            phone = row[2]
+            print("Firstname: ", firstname)
+            print("Lastname: ", lastname)
+            print("Phone: ", phone)
+
+            # create dict
+            contact_info = {
+              "firstname": firstname,
+              "lastname": lastname,
+              "phone": phone,
+              "msg": message,
+              "timestamp": timestamp
+            }
+
+            print("Contact Info: ", contact_info)
+
+            # Convert dict to json
+            json_data = json.dumps(contact_info)
+            print("JSON Data: ", json_data)
+
+            return json_data
+          
+
+        # Query database match contactsubscriptionid to clientid in contacts table
+        # Then use clientid to get First and Last name
+        print("Record type = ", type(record))
+
+        # remove unwanted character from record to get client id
+        bad_chars = ['(', ')', ',', ' ']
+        record_string = str(record[0])
+        clientid = ''.join(i for i in record_string if not i in bad_chars)
+
+        print("Record index 0: ", record[0])
+        
+        print("List to string: ", str(record[0]))
+        test_text = "text_text"
+        print("clientid:", test_text)
+        cursor.execute(sql_select_query3, (clientid,))
+        record = cursor.fetchall()
+        print("Record clientid First Last Name: ", record)
+        print("Record type homephone", type(record))
+
+        # get record values and types in prep for new tuple
+        print("index 0: ", record[0])
+        index0 = record[0]
+        sender_name = [n for n in index0]
+        print("Sender Name Index0: ", sender_name[0])
+        print("Type of Firstname: ", type(sender_name))
+        firstname = sender_name[0]
+        lastname = sender_name[1]
+        print("Sender Name: ", firstname + " " + lastname)
+        print("Phone Number: ", phone)
+
+        # create tuple: new_record
+        new_record = (firstname, lastname, phone)
+        print("New Record: ", new_record)
+        print("New Record Type: ", type(new_record))
+
+        # insert into list record[]
+        record = []
+        record.append(new_record)
+        print("Record after tuple insert", record)
+        
+
 
     for row in record:
-      print(row)
+      print("Print row: ", row)
       print("\n")
       print("Row type = ", type(row)) # type = Tuple
 

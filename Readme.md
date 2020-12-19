@@ -10,14 +10,18 @@ Use PM2 or other process manager to run scripts on boot.
 
 Uses Python3
 
+# Install the following packages
+paho-mqtt mysql-connector Flask Flask-MQTT twilio
+
 # Setup
-# Create 2 _init.py files to import settings and password
+Create 2 _init.py files to import settings and password
 
 
 Example: 
 
-# mqtt_init.py
-# setup for MQTT Cloud but will work with any broker
+mqtt_init.py
+
+# Setup for MQTT Cloud with SSL but will work with any broker
 
 broker=""
 username = ""
@@ -73,9 +77,19 @@ If temp is at Warning level the app will pause for 10 min, check the temp again 
 If temp is at the Danger level it will pause for 10 min, check the temp again and if its still in the Danger level it will initiat a server shutdown and send a Shutdown text. 
 
 # twilio_text.py
-# import into temp_counter.py
+import into temp_counter.py
 
 This script will send outgoing message thru twilio. 
 
 # app.py
-A Flask application to read published temp stats in a web browser. 
+A Flask application to read published temp stats in a web browser.
+
+#  mgtt_mysql.py
+Query's Mysql database for recipient First and Last name on outoing text messages.
+
+This file subscribes to MQTT Topic SMS_out/flow.
+Query's the recipeints phone number in Mysql and returns the First and Last name. 
+This is combined with the the contact details from Topic SMS_out/flow and published to Topic Get_Contact_Name, which is used by the Front End to display Sent Message History. 
+
+# sms_send_2.py 
+Handles outgoing text messages and sends thru Twilio or Flowroute. 
