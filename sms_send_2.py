@@ -91,14 +91,14 @@ def on_message(client, userdata, msg):
         print("Data: ", data)
 
         # send outgoing text using flowroute
-        #flow_text.flow_sms_send(data)
+        flow_text.flow_sms_send(data)
 
     # Send notification text on incoming messages
     if msg.topic == "SMS_in":
         print("send to twilio")
-        print(m_in["message"])
+        print("Whole Message Content: ", m_in)
         msg_text = m_in["message"]
-        msg_from = m_in["from"]
+        msg_from = m_in["phone"]
         msg_sender_firstname = m_in["firstname"]
         msg_sender_lastname = m_in["lastname"]
         message = "Alert! Text from: {} {} {}\nMessage: {}".format(msg_sender_firstname, msg_sender_lastname, msg_from, msg_text)
