@@ -26,6 +26,9 @@ password = mqtt_init.password
 # flow_key = mqtt_init.FLOWROUTE_KEY
 caller_id = mqtt_init.OUTGOING_CID
 
+num1 = mqtt_init.notify_num1
+num2 = mqtt_init.notify_num2
+
 ##### Begin MQTT Settings #####
 
 # Define callbacks
@@ -91,23 +94,59 @@ def on_message(client, userdata, msg):
         print("Data: ", data)
 
         # send outgoing text using flowroute
+        #flow_text.flow_sms_send(data)
+
+    # Send outgoing notification text text using flowroute
+    if msg.topic == "SMS_in":
+      print("send to flowroute")
+      print("Whole Message Content: ", m_in)
+      msg_text = m_in["message"]
+      msg_from = m_in["phone"]
+      msg_sender_firstname = m_in["firstname"]
+      msg_sender_lastname = m_in["lastname"]
+      message = "Alert! Text from: {} {} {}\nMessage: {}".format(msg_sender_firstname, msg_sender_lastname, msg_from, msg_text)
+      print("Outgoing notification message: ", message)
+
+      # Send notification to these recipients
+      recipients = [num1, num2]
+
+      for num in recipients:
+        print("Recipient number: ", num)
+
+
+        # Convert to flowroute
+        data={
+              "data": {
+                  "type": "message",
+                  "attributes": {
+                      "to":num,
+                      "from":caller_id,
+                      "body":message 
+                  }
+              }
+          }
+        print("Data: ", data)
         flow_text.flow_sms_send(data)
 
+
     # Send notification text on incoming messages
-    if msg.topic == "SMS_in":
-        print("send to twilio")
-        print("Whole Message Content: ", m_in)
-        msg_text = m_in["message"]
-        msg_from = m_in["phone"]
-        msg_sender_firstname = m_in["firstname"]
-        msg_sender_lastname = m_in["lastname"]
-        message = "Alert! Text from: {} {} {}\nMessage: {}".format(msg_sender_firstname, msg_sender_lastname, msg_from, msg_text)
-        print("Outgoing notification message: ", message)
+    # Commented 8/24/2023 replaced twilio with flowroute for outbound messages
+#-------------------------------------------------------------------------------#
+    # if msg.topic == "SMS_in":
+    #     print("send to twilio")
+    #     print("Whole Message Content: ", m_in)
+    #     msg_text = m_in["message"]
+    #     msg_from = m_in["phone"]
+    #     msg_sender_firstname = m_in["firstname"]
+    #     msg_sender_lastname = m_in["lastname"]
+    #     message = "Alert! Text from: {} {} {}\nMessage: {}".format(msg_sender_firstname, msg_sender_lastname, msg_from, msg_text)
+    #     print("Outgoing notification message: ", message)
+#-------------------------------------------------------------------------------#
 
         # Twilio forward to designated recipient
 
-        twilio_text.sms_send(message)
-        twilio_text.sms_send2(message)
+        #twilio_text.sms_send(message)
+        #twilio_text.sms_send2(message)
 
         #twilio_text.sms_send(message)
 
