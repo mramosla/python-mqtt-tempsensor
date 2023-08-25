@@ -94,7 +94,7 @@ def on_message(client, userdata, msg):
         print("Data: ", data)
 
         # send outgoing text using flowroute
-        #flow_text.flow_sms_send(data)
+        flow_text.flow_sms_send(data)
 
     # Send outgoing notification text text using flowroute
     if msg.topic == "SMS_in":
