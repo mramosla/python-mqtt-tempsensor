@@ -29,6 +29,18 @@ caller_id = mqtt_init.OUTGOING_CID
 num1 = mqtt_init.notify_num1
 num2 = mqtt_init.notify_num2
 
+working_mode = mqtt_init.WORKING_MODE
+
+# Print current working mode
+print("\n")
+print("*********************")
+print("\n")
+print("WORKING MODE: ", working_mode)
+print("\n")
+print("*********************")
+print("\n")
+
+
 ##### Begin MQTT Settings #####
 
 # Define callbacks
@@ -78,7 +90,9 @@ def on_disconnect(client, userdata, rc):
 def on_message(client, userdata, msg):
     m_decode = str(msg.payload.decode("utf-8"))
     m_in = json.loads(m_decode)
-    print("Incoming MQTT Data: ", m_in)
+    print("\n")
+    print("----------------------------------------------------------------")
+    print("On Message - Incoming MQTT Data: ", m_in)
 
     if msg.topic == 'SMS_out/flow':
         data={
@@ -91,27 +105,47 @@ def on_message(client, userdata, msg):
                 }
             }
         }
+        
         print("Data: ", data)
 
-        # send outgoing text using flowroute
-        flow_text.flow_sms_send(data)
+        if working_mode == "Dev":
+          print("\n")
+          print("SMS_out/flow, Line 111 Dev mode: ", working_mode)
+          print("----------------------------------------------------------------")
+          print("\n")
+          return
 
-    # Send outgoing notification text text using flowroute
+        # send outgoing text using flowroute
+        if working_mode == "Prod":
+          print("\n")
+          print("line 118 Executing flow_sms_send function...")
+          print("\n")
+          flow_text.flow_sms_send(data)
+          print("----------------------------------------------------------------")
+          print("\n")
+        
+
+    # Send outgoing notification text using flowroute
     if msg.topic == "SMS_in":
-      print("send to flowroute")
-      print("Whole Message Content: ", m_in)
+      print("SMS_in - send to flowroute")
+      #print("SMS_in - Whole Message Content: ", m_in)
       msg_text = m_in["message"]
       msg_from = m_in["phone"]
       msg_sender_firstname = m_in["firstname"]
       msg_sender_lastname = m_in["lastname"]
       message = "Alert! Text from: {} {} {}\nMessage: {}".format(msg_sender_firstname, msg_sender_lastname, msg_from, msg_text)
-      print("Outgoing notification message: ", message)
+      print("\n")
+      print("SMS_in - Send outgoing notification text using flowroute")
+      print("SMS_in - line 134 Outgoing notification message: ", message)
+      print("----------------------------------------------------------------")
+      print("\n")
 
       # Send notification to these recipients
       recipients = [num1, num2]
 
       for num in recipients:
-        print("Recipient number: ", num)
+        print("----------------------------------------------------------------")
+        print("Notification Recipient: ", num)
 
 
         # Convert to flowroute
@@ -125,8 +159,26 @@ def on_message(client, userdata, msg):
                   }
               }
           }
-        print("Data: ", data)
-        flow_text.flow_sms_send(data)
+        
+        #print("\n")
+        print("SMS_in - Data to flowroute: ", data)
+        print("\n")
+
+        if working_mode == "Dev":
+          #print("\n")
+          print("SMS_in - Line 162 Dev mode: ", working_mode)
+          print("----------------------------------------------------------------")
+          print("\n")
+          
+
+        if working_mode == "Prod":
+          #print("\n")
+          print("SMS_in - line 168 Executing flow_sms_send function...")
+          flow_text.flow_sms_send(data)
+          print("----------------------------------------------------------------")
+          print("\n")
+          
+        
 
 
     # Send notification text on incoming messages
