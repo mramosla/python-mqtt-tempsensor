@@ -88,7 +88,26 @@ def on_disconnect(client, userdata, rc):
    print("Timestamp: ", timestamp)
 
 def on_message(client, userdata, msg):
+  
+  try:
+    
+    error_data={
+              "data": {
+                  "type": "message",
+                  "attributes": {
+                      "to":num1,
+                      "from":caller_id,
+                      "body":"Notification error check web interface." 
+                  }
+              }
+          }
+    print("----------------------------------------------------------------")
+    print("SMS_in raw - client: ", client)
+    print("SMS_in raw - userdata: ", userdata)
+    print("SMS_in raw - msg: ", msg)
     m_decode = str(msg.payload.decode("utf-8"))
+    print("\n")
+    print("m_decode: ", m_decode)
     m_in = json.loads(m_decode)
     print("\n")
     print("----------------------------------------------------------------")
@@ -128,7 +147,8 @@ def on_message(client, userdata, msg):
     # Send outgoing notification text using flowroute
     if msg.topic == "SMS_in":
       print("SMS_in - send to flowroute")
-      #print("SMS_in - Whole Message Content: ", m_in)
+      print("\n")
+      print("SMS_in - Whole Message Content: ", m_in)
       msg_text = m_in["message"]
       msg_from = m_in["phone"]
       msg_sender_firstname = m_in["firstname"]
@@ -143,9 +163,9 @@ def on_message(client, userdata, msg):
       # Send notification to these recipients
       recipients = [num1, num2]
 
-      for num in recipients:
-        print("----------------------------------------------------------------")
-        print("Notification Recipient: ", num)
+      for index, num in enumerate(recipients):
+        print("###############################################################")
+        #print("Notification Recipient: ", num)
 
 
         # Convert to flowroute
@@ -159,6 +179,8 @@ def on_message(client, userdata, msg):
                   }
               }
           }
+
+        
         
         #print("\n")
         print("SMS_in - Data to flowroute: ", data)
@@ -166,19 +188,49 @@ def on_message(client, userdata, msg):
 
         if working_mode == "Dev":
           #print("\n")
-          print("SMS_in - Line 162 Dev mode: ", working_mode)
+          print("SMS_in - Line 191 Dev mode: ", working_mode)
           print("----------------------------------------------------------------")
+          print("Outgoing Recipient Index: ", index)
+          print("Outgoing Recipient Number: ", num)
+          print("Outboud Notification Data: ", data)
+          print("\n")
           print("\n")
           
 
         if working_mode == "Prod":
           #print("\n")
-          print("SMS_in - line 168 Executing flow_sms_send function...")
+          print("SMS_in - line 199 Executing flow_sms_send function...")
+          print("----------------------------------------------------------------")
+          print("Outgoing Recipient Index: ", index)
+          print("Outgoing Recipient Number: ", num)
+          print("Outgoing Notification Data: ", data)
+          print("\n")
           flow_text.flow_sms_send(data)
           print("----------------------------------------------------------------")
           print("\n")
+          print("\n")
           
-        
+  except Exception as e:
+    pass
+    print("\n")
+    print("ERROR...line 207 on message : ", e)
+    print("\n")
+    print("Dev Mode: Sending ERROR notification text : ", error_data)
+    print("\n")
+    # Keep for testing
+    if working_mode == "Dev":
+      flow_text.flowroute_loop(error_data)
+    
+
+    # send outgoing text using flowroute
+    if working_mode == "Prod":
+      print("\n")
+      print("ERROR: line 219 Executing flow_sms_send function...")
+      print("ERROR: Sending outgoing notification text.")
+      print("\n")
+      flow_text.flowroute_loop(error_data)
+      print("----------------------------------------------------------------")
+      print("\n")
 
 
     # Send notification text on incoming messages
@@ -241,12 +293,14 @@ try:
 
 except KeyboardInterrupt:
   pass
+  client.loop_stop()
+  client.disconnect()
 
-except socket.error:
+except socket.error as e:
   pass
-  print("Error: %s" % e)
+  print("Socket Error: %s", e)
 
 
 
-client.loop_stop()
-client.disconnect()
+# client.loop_stop()
+# client.disconnect()

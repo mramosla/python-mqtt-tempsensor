@@ -14,6 +14,11 @@ import ssl
 
 import socket
 
+num1 = mqtt_init.notify_num1
+num2 = mqtt_init.notify_num2
+num3 = mqtt_init.notify_num3
+working_mode = mqtt_init.WORKING_MODE
+
 # Globals
 flow_user = mqtt_init.FLOWROUTE_USER
 flow_key = mqtt_init.FLOWROUTE_KEY
@@ -38,3 +43,21 @@ def flow_sms_send(data):
       print(r.text)
   else:
       print(r.text)
+
+def flowroute_loop(text_data):
+    print("############################################")
+    print("Working Mode: ", working_mode)
+    print("flow_testp.py: Sending via flowroute ERROR notification...")
+    print("\n")
+    recipients = [num1, num2, num3]
+    text_data = text_data
+
+    for index, num in enumerate(recipients):     
+      print("Outgoing Recipient Index: ", index)
+      print("Outgoing Recipient Number: ", num)
+      print("Outgoing Data: ", text_data)
+      if working_mode == "Prod":
+        flow_sms_send(text_data)
+      print("\n")
+
+

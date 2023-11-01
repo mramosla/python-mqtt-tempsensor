@@ -11,7 +11,7 @@ Use PM2 or other process manager to run scripts on boot.
 Uses Python3
 
 # Install the following packages
-paho-mqtt mysql-connector Flask Flask-MQTT twilio
+paho-mqtt mysql-connector Flask Flask-MQTT requests twilio
 
 # Setup
 Create 2 _init.py files to import settings and password
